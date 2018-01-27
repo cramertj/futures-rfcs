@@ -199,7 +199,7 @@ pub trait AsyncRead {
     fn poll_read(&mut self, buf: &mut [u8], wh: WakeHandle)
         -> AsyncResult<usize, Self::Error>;
 
-    fn poll_vectored_read<'a>(&'a mut self, vec: &mut [&'a mut IoVec])
+    fn poll_vectored_read(&mut self, vec: &mut [&mut IoVec], wh: WakeHandle)
         -> AsyncResult<usize, Self::Error> { ... }
 }
 
@@ -208,7 +208,7 @@ pub trait AsyncWrite {
     fn poll_write(&mut self, buf: &[u8], wh: WakeHandle)
         -> AsyncResult<usize, Self::Error>;
 
-    fn poll_vectored_write(&mut self, vec: &[&IoVec])
+    fn poll_vectored_write(&mut self, vec: &[&IoVec], wh: WakeHandle)
         -> AsyncResult<usize, Self::Error> { ... }
 
     fn poll_close(&mut self, wh: WakeHandle)
