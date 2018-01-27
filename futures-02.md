@@ -195,16 +195,21 @@ pub trait Stream {
 pub trait AsyncRead {
     type Error;
     unsafe fn initializer(&self) -> Initializer { ... }
-    fn poll_read<B: BufMut>(&mut self, buf: &mut B, wh: WakeHandle)
-        -> AsyncResult<usize, Self::Error>
-        where Self: Sized;
+
+    fn poll_read(&mut self, buf: &mut [u8], wh: WakeHandle)
+        -> AsyncResult<usize, Self::Error>;
+
+    fn poll_vectored_read<'a>(&'a mut self, vec: &mut [&'a mut IoVec])
+        -> AsyncResult<usize, Self::Error> { ... }
 }
 
 pub trait AsyncWrite {
     type Error;
-    fn poll_write<B: Buf>(&mut self, buf: &mut B, wh: WakeHandle)
-        -> AsyncResult<usize, Self::Error>
-        where Self: Sized;
+    fn poll_write(&mut self, buf: &[u8], wh: WakeHandle)
+        -> AsyncResult<usize, Self::Error>;
+
+    fn poll_vectored_write(&mut self, vec: &[&IoVec])
+        -> AsyncResult<usize, Self::Error> { ... }
 
     fn poll_close(&mut self, wh: WakeHandle)
         -> AsyncResult<(), Self::Error>;
